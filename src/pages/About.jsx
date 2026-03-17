@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Heart, Award, Users, Leaf } from "lucide-react";
+import usePageTitle from "../hooks/usePageTitle";
 
 export default function About() {
+  usePageTitle("About");
   return (
     <div className="min-h-screen bg-[#FFF8F0]">
       {/* Hero */}

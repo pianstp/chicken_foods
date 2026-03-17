@@ -1,17 +1,88 @@
 import { Link } from "react-router-dom";
 import { Star, Clock, Truck, Shield, ChevronRight, Flame } from "lucide-react";
+import { useState, useEffect } from "react";
 import MenuCard from "../components/MenuCard";
 import { menuItems, testimonials } from "../data/menuData";
+import useScrollAnimation from "../hooks/useScrollAnimation";
+import usePageTitle from "../hooks/usePageTitle";
+
+const heroSlides = [
+  {
+    image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=1400&q=80",
+    tag: "🔥 Crispy & Golden",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=1400&q=80",
+    tag: "🌶️ Spicy Hot Wings",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&q=80",
+    tag: "🍢 Authentic Suya",
+  },
+];
 
 export default function Home() {
+  usePageTitle("Home");
   const popular = menuItems.filter((i) => i.popular).slice(0, 4);
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const featuresAnim = useScrollAnimation();
+  const popularAnim = useScrollAnimation();
+  const testimonialAnim = useScrollAnimation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimating(true);
+      setTimeout(() => {
+        setCurrent((prev) => (prev + 1) % heroSlides.length);
+        setAnimating(false);
+      }, 600);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#370617] via-[#6A1E04] to-[#E85D04] text-white min-h-[90vh] flex items-center relative overflow-hidden w-full">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=1200')] bg-cover bg-center" />
-        <div className="w-full max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-8 items-center relative z-10">
+      <section className="text-white min-h-[90vh] flex items-center relative overflow-hidden w-full">
+        {/* Background Slides */}
+        {heroSlides.map((slide, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 bg-cover bg-center transition-all duration-[3000ms] ease-in-out"
+            style={{
+              backgroundImage: `url('${slide.image}')`,
+              opacity: i === current ? 1 : 0,
+              transform: i === current ? "scale(1.05)" : "scale(1)",
+              transition: "opacity 3s ease-in-out, transform 3s ease-in-out",
+            }}
+          />
+        ))}
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#370617]/90 via-[#6A1E04]/80 to-[#E85D04]/60 z-10" />
+
+        {/* Slide dots */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`rounded-full transition-all duration-500 ${
+                i === current ? "w-6 h-2.5 bg-[#FFBA08]" : "w-2.5 h-2.5 bg-white/40 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Slide tag */}
+        <div
+          className="absolute top-6 right-4 sm:right-8 z-30 bg-black/30 backdrop-blur-sm border border-white/20 text-white text-xs sm:text-sm px-3 py-1.5 rounded-full transition-all duration-500"
+          style={{ opacity: animating ? 0 : 1, transform: animating ? "translateY(-8px)" : "translateY(0)" }}
+        >
+          {heroSlides[current].tag}
+        </div>
+
+        <div className="w-full max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-8 items-center relative z-20">
           <div className="w-full">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-2 rounded-full text-xs sm:text-sm mb-5 border border-white/20">
               <Flame size={14} className="text-[#FFBA08] flex-shrink-0" /> Fresh & Hot — Order Now!
@@ -60,7 +131,15 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="py-12 bg-white">
+      <section 
+        ref={featuresAnim.ref}
+        className="py-12 bg-white transition-all duration-700 ${featuresAnim.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}"
+        style={{
+          opacity: featuresAnim.visible ? 1 : 0,
+          transform: featuresAnim.visible ? 'translateY(0)' : 'translateY(32px)',
+          transition: 'opacity 700ms ease-out, transform 700ms ease-out'
+        }}
+      >
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {[
@@ -82,7 +161,15 @@ export default function Home() {
       </section>
 
       {/* Popular Items */}
-      <section className="py-16 bg-[#FFF8F0]">
+      <section 
+        ref={popularAnim.ref}
+        className="py-16 bg-[#FFF8F0] transition-all duration-700"
+        style={{
+          opacity: popularAnim.visible ? 1 : 0,
+          transform: popularAnim.visible ? 'translateY(0)' : 'translateY(32px)',
+          transition: 'opacity 700ms ease-out, transform 700ms ease-out'
+        }}
+      >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -113,7 +200,15 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-white">
+      <section 
+        ref={testimonialAnim.ref}
+        className="py-16 bg-white transition-all duration-700"
+        style={{
+          opacity: testimonialAnim.visible ? 1 : 0,
+          transform: testimonialAnim.visible ? 'translateY(0)' : 'translateY(32px)',
+          transition: 'opacity 700ms ease-out, transform 700ms ease-out'
+        }}
+      >
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-xl sm:text-3xl font-extrabold text-[#370617] text-center mb-2">What Our Customers Say</h2>
           <p className="text-gray-500 text-center mb-10">Real reviews from real chicken lovers</p>

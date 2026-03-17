@@ -2,14 +2,10 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ShoppingBag, User, MapPin, Star, LogOut } from "lucide-react";
-
-const mockOrders = [
-  { id: "CH1042", date: "Mar 15, 2025", items: "Crispy Fried Chicken, Suya", total: 7000, status: "Delivered" },
-  { id: "CH1031", date: "Mar 10, 2025", items: "Chicken & Jollof Rice Combo", total: 4200, status: "Delivered" },
-  { id: "CH1019", date: "Mar 3, 2025", items: "Spicy Wings x2", total: 5600, status: "Delivered" },
-];
+import usePageTitle from "../hooks/usePageTitle";
 
 export default function Dashboard() {
+  usePageTitle("My Account");
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -18,6 +14,9 @@ export default function Dashboard() {
   }, [user, navigate]);
 
   if (!user) return null;
+
+  const orders = user.orders || [];
+  const hasOrders = orders.length > 0;
 
   return (
     <div className="min-h-screen bg-[#FFF8F0] py-10">
@@ -54,9 +53,9 @@ export default function Dashboard() {
           {/* Stats */}
           <div className="md:col-span-2 grid grid-cols-3 gap-3 h-fit">
             {[
-              { icon: <ShoppingBag size={18} />, label: "Total Orders", value: mockOrders.length },
-              { icon: <Star size={18} />, label: "Loyalty Points", value: "350 pts" },
-              { icon: <MapPin size={18} />, label: "Addresses", value: 1 },
+              { icon: <ShoppingBag size={18} />, label: "Total Orders", value: orders.length },
+              { icon: <Star size={18} />, label: "Loyalty Points", value: orders.length * 50 + " pts" },
+              { icon: <MapPin size={18} />, label: "Addresses", value: 0 },
             ].map(({ icon, label, value }) => (
               <div key={label} className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm text-center">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#E85D04]/10 rounded-full flex items-center justify-center mx-auto mb-2 text-[#E85D04]">
@@ -72,26 +71,45 @@ export default function Dashboard() {
           <div className="md:col-span-3 bg-white rounded-2xl shadow-sm overflow-hidden">
             <div className="p-4 sm:p-5 border-b flex items-center justify-between">
               <h2 className="font-bold text-[#370617] text-base sm:text-lg">Order History</h2>
-              <Link to="/menu" className="text-sm text-[#E85D04] hover:underline">Order Again</Link>
+              {hasOrders && (
+                <Link to="/menu" className="text-sm text-[#E85D04] hover:underline">Order Again</Link>
+              )}
             </div>
-            <div className="divide-y">
-              {mockOrders.map((order) => (
-                <div key={order.id} className="p-4 sm:p-5 flex items-start sm:items-center justify-between gap-3 hover:bg-[#FFF8F0] transition-colors">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-[#370617] text-sm">#{order.id}</span>
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{order.status}</span>
+
+            {hasOrders ? (
+              <div className="divide-y">
+                {orders.map((order) => (
+                  <div key={order.id} className="p-4 sm:p-5 flex items-start sm:items-center justify-between gap-3 hover:bg-[#FFF8F0] transition-colors">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-[#370617] text-sm">#{order.id}</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{order.status}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-0.5 truncate max-w-[200px] sm:max-w-none">{order.items}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{order.date}</p>
                     </div>
-                    <p className="text-sm text-gray-500 mt-0.5 truncate max-w-[200px] sm:max-w-none">{order.items}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{order.date}</p>
+                    <div className="text-right">
+                      <p className="font-bold text-[#E85D04]">₦{order.total.toLocaleString()}</p>
+                      <button className="text-xs text-gray-400 hover:text-[#E85D04] mt-1 transition-colors">Reorder</button>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-[#E85D04]">₦{order.total.toLocaleString()}</p>
-                    <button className="text-xs text-gray-400 hover:text-[#E85D04] mt-1 transition-colors">Reorder</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="text-6xl mb-4">🍗</div>
+                <h3 className="font-bold text-[#370617] text-lg mb-2">No orders yet</h3>
+                <p className="text-gray-500 text-sm mb-6 max-w-xs">
+                  You haven't placed any orders yet. Browse our menu and place your first order!
+                </p>
+                <Link
+                  to="/menu"
+                  className="bg-[#E85D04] hover:bg-[#DC2F02] text-white px-8 py-3 rounded-full font-bold transition-all"
+                >
+                  Place Your First Order 🍗
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

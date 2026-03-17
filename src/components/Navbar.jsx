@@ -23,10 +23,11 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-[#370617] text-white sticky top-0 z-50 shadow-lg">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+    <>
+      <nav className="bg-[#370617] text-white fixed top-0 left-0 right-0 z-50 shadow-lg w-full">
+      <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between gap-2">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl">🍗</span>
+          <span className="text-2xl">{"\uD83C\uDF57"}</span>
           <span className="font-bold text-lg sm:text-xl text-[#F48C06]">ChickenHub</span>
         </Link>
 
@@ -98,5 +99,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    </>
   );
 }

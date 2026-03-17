@@ -23,4 +23,5 @@ html, body {
 body {
   background-color: #FFF8F0;
   font-family: 'Segoe UI', sans-serif;
+  padding-top: 56px; /* Match fixed navbar height */
 }

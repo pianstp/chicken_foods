@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { CheckCircle, Clock, ChefHat, Bike, Home } from "lucide-react";
 import { useState, useEffect } from "react";
+import usePageTitle from "../hooks/usePageTitle";
 
 const steps = [
   { icon: <CheckCircle size={24} />, label: "Order Confirmed", desc: "We received your order" },
@@ -10,15 +11,25 @@ const steps = [
 ];
 
 export default function Track() {
+  usePageTitle("Track Order");
   const [currentStep, setCurrentStep] = useState(1);
+  const [orderNum, setOrderNum] = useState(null);
 
   useEffect(() => {
-    const timers = [
-      setTimeout(() => setCurrentStep(2), 3000),
-      setTimeout(() => setCurrentStep(3), 7000),
-    ];
-    return () => timers.forEach(clearTimeout);
+    if (!orderNum) {
+      setOrderNum(`CH${Math.floor(Math.random() * 9000 + 1000)}`);
+    }
   }, []);
+
+  useEffect(() => {
+    if (orderNum) {
+      const timers = [
+        setTimeout(() => setCurrentStep(2), 3000),
+        setTimeout(() => setCurrentStep(3), 7000),
+      ];
+      return () => timers.forEach(clearTimeout);
+    }
+  }, [orderNum]);
 
   return (
     <div className="min-h-screen bg-[#FFF8F0] flex items-center justify-center px-4 py-12">
@@ -26,7 +37,7 @@ export default function Track() {
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-3xl font-extrabold text-[#370617]">Order Placed!</h1>
-          <p className="text-gray-500 mt-2">Your order #CH{Math.floor(Math.random() * 9000 + 1000)} is being processed</p>
+          <p className="text-gray-500 mt-2">Your order <span className="font-bold text-[#E85D04]">#{orderNum}</span> is being processed</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-8">

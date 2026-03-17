@@ -3,8 +3,10 @@ import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import usePageTitle from "../hooks/usePageTitle";
 
 export default function Cart() {
+  usePageTitle("Cart");
   const { cart, removeFromCart, updateQty, total, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();

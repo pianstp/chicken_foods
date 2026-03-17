@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import MenuCard from "../components/MenuCard";
 import { menuItems, categories } from "../data/menuData";
+import usePageTitle from "../hooks/usePageTitle";
 
 export default function Menu() {
+  usePageTitle("Menu");
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -21,17 +23,19 @@ export default function Menu() {
         <p className="text-white/70 text-sm sm:text-lg">Fresh, hot, and made to order</p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-4 py-10 md:py-0">
         {/* Search */}
-        <div className="relative max-w-md mx-auto mb-8">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search menu..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 bg-white focus:outline-none focus:border-[#E85D04] focus:ring-2 focus:ring-[#E85D04]/20 shadow-sm"
-          />
+        <div className="sticky md:relative top-0 md:top-auto z-30 md:z-auto max-w-md mx-auto mb-8 md:mb-8 py-4 md:py-10 px-4 md:px-0 bg-[#FFF8F0] md:bg-transparent">
+          <div className="relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search menu..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 bg-white focus:outline-none focus:border-[#E85D04] focus:ring-2 focus:ring-[#E85D04]/20 shadow-sm"
+            />
+          </div>
         </div>
 
         {/* Categories */}
